@@ -18,26 +18,29 @@ public class NumbersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_numbers);
 
-        ArrayList<String> numbersList = new ArrayList<String>();
-        numbersList.add("one");
-        numbersList.add("two");
-        numbersList.add("three");
-        numbersList.add("four");
-        numbersList.add("five");
-        numbersList.add("six");
-        numbersList.add("seven");
-        numbersList.add("eight");
-        numbersList.add("nine");
-        numbersList.add("ten");
+        ArrayList<Word> words = new ArrayList<Word>();
+        words.add(new Word("one", "luttie"));
+        words.add(new Word("two", "otiiko"));
+        words.add(new Word("three", "tolookosu"));
+        words.add(new Word("four", "oyyisa"));
+        words.add(new Word("five", "massokka"));
+        words.add(new Word("six", "temmokka"));
+        words.add(new Word("seven", "kenekaku"));
+        words.add(new Word("eight", "kawinta"));
+        words.add(new Word("nine", "wo'e"));
+        words.add(new Word("ten", "na'aacha"));
 
 
-        // simple_list_item_1.xml is a predefined resource in Andorid framework
-        // list item layout contains a single {@link TextView} which the adpater will set to display a single number
-        ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, numbersList);
+        // Create {@link ArrayAdapter}
+        // adapter creates layout for each item in the list using the simple_list_item_1.xml (builtin Android framework)
+        // each layout contains a single {@link TextView} to display single word
+        WordAdapter adapter = new WordAdapter(this, words);
 
+        // Find {@link ListView} in {@link Activity}
         ListView listView = (ListView) findViewById(R.id.list);
 
-        listView.setAdapter(itemsAdapter);
+        // Make {@link ListView}  use the [@link ArrayAdapter}
+        listView.setAdapter(adapter);
 
 
     }
