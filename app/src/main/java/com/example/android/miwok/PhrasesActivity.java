@@ -29,7 +29,7 @@ public class PhrasesActivity extends AppCompatActivity {
         // Create {@link ArrayAdapter}
         // adapter creates layout for each item in the list using the simple_list_item_1.xml (builtin Android framework)
         // each layout contains a single {@link TextView} to display single word
-        WordAdapter adapter = new WordAdapter(this, words);
+        WordAdapter adapter = new WordAdapter(this, words, R.color.category_phrases);
 
         // Find {@link ListView} in {@link Activity}
         ListView listView = (ListView) findViewById(R.id.list);

@@ -1,10 +1,13 @@
 package com.example.android.miwok;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -15,8 +18,12 @@ import java.util.ArrayList;
 
 public class WordAdapter extends ArrayAdapter<Word> {
 
-    public WordAdapter(Activity context, ArrayList<Word> words) {
+    private int mColorResourceId;
+
+    public WordAdapter(Activity context, ArrayList<Word> words, int colorResourceId) {
         super(context, 0, words);
+        Log.v("WordAdapter", Integer.toString(colorResourceId));
+        mColorResourceId = colorResourceId;
     }
 
     @Override
@@ -41,6 +48,20 @@ public class WordAdapter extends ArrayAdapter<Word> {
         // Get the miwok text from the current AndroidFlavor object and
         // set this text on the number TextView
         miwok_text.setText(word.getMiwokTranslation());
+
+        ImageView img = (ImageView) listItemView.findViewById(R.id.image);
+        
+
+        if (word.hasImage()) {
+            img.setImageResource(word.getImageResourceId());
+            img.setVisibility(View.VISIBLE);
+        } else {
+            img.setVisibility(View.GONE);
+        }
+
+        View textContainer = listItemView.findViewById(R.id.text_container);
+        int color = ContextCompat.getColor(getContext(), mColorResourceId);
+        textContainer.setBackgroundColor(color);
 
         // Return the whole list item layout
         return listItemView;
