@@ -37,7 +37,7 @@ public class NumbersActivity extends AppCompatActivity {
         WordAdapter adapter = new WordAdapter(this, words);
 
         // Find {@link ListView} in {@link Activity}
-        ListView listView = (ListView) findViewById(R.id.list);
+        ListView listView = (ListView) findViewById(R.id.list_numbers);
 
         // Make {@link ListView}  use the [@link ArrayAdapter}
         listView.setAdapter(adapter);
