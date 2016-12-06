@@ -1,6 +1,7 @@
 package com.example.android.miwok;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,7 +51,7 @@ public class WordAdapter extends ArrayAdapter<Word> {
         miwok_text.setText(word.getMiwokTranslation());
 
         ImageView img = (ImageView) listItemView.findViewById(R.id.image);
-        
+
 
         if (word.hasImage()) {
             img.setImageResource(word.getImageResourceId());
