@@ -1,5 +1,7 @@
 package com.example.android.miwok;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +12,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK;
 
 public class NumbersActivity extends AppCompatActivity {
 
@@ -22,10 +27,31 @@ public class NumbersActivity extends AppCompatActivity {
         }
     };
 
+    private AudioManager am;
+
+    AudioManager.OnAudioFocusChangeListener afChangeListener =
+            new AudioManager.OnAudioFocusChangeListener() {
+                public void onAudioFocusChange(int focusChange) {
+                    if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT || focusChange == AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                        // Pause playback
+                        mediaPlayer.pause();
+                        mediaPlayer.seekTo(0);
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                        // Resume playback
+                        mediaPlayer.start(); // no resume method, start will pickup where it left off
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                        // Stop playback
+                        releaseMediaPlayer();
+                    }
+                }
+            };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
+
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         final ArrayList<Word> words = new ArrayList<Word>();
         words.add(new Word("one", "luttie", R.raw.number_one, R.drawable.number_one));
@@ -60,10 +86,20 @@ public class NumbersActivity extends AppCompatActivity {
                 //Log.v("NumbersActivity", word.toString());
 
                 releaseMediaPlayer();
-                mediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getAudioResourceId());
-                mediaPlayer.start();
-                mediaPlayer.setOnCompletionListener(onCompletionListener);
 
+
+                int result = am.requestAudioFocus(afChangeListener,
+                        // Use the music stream.
+                        AudioManager.STREAM_MUSIC,
+                        // Request permanent focus.
+                        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    // Gained audio focus
+                    mediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getAudioResourceId());
+                    mediaPlayer.start();
+                    mediaPlayer.setOnCompletionListener(onCompletionListener);
+                }
 
             }
         });
@@ -84,6 +120,14 @@ public class NumbersActivity extends AppCompatActivity {
             // setting the media player to null is an easy way to tell that the media player
             // is not configured to play an audio file at the moment.
             mediaPlayer = null;
+
+            am.abandonAudioFocus(afChangeListener);
         }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        releaseMediaPlayer();
     }
 }
